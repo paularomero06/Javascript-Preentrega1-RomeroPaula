@@ -1,24 +1,68 @@
-const intentos = parseInt(prompt("Facilite la realización de sus recetas ¿Cuántas conversiones de temperatura deseas realizar?"));
-
-if (isNaN(intentos) || intentos <= 0) {
-    alert("Por favor, ingresa un número válido de intentos.");
-    console.log("Número de intentos inválido.");
-} else {
-    for (let i = 0; i < intentos; i++) {
-        const fahrenheit = parseFloat(prompt(`Conversión ${i + 1}/${intentos}: Ingresa la temperatura en Fahrenheit:`)
-        );
-
-        if (isNaN(fahrenheit)) {
-            alert("Por favor, ingresa un número válido.");
-            console.log(`Conversión ${i + 1}: Valor no válido.`);
-            continue; // Pasar al intento siguente cuando sea válido
-        }
-
-        const celsius = (fahrenheit - 32) * 5 / 9;
-        alert(`${fahrenheit} grados Fahrenheit son equivalentes a ${celsius.toFixed(2)} grados Celsius.`);
-        console.log(`Conversión ${i + 1}: ${fahrenheit} grados Fahrenheit son equivalentes a ${celsius.toFixed(2)} grados Celsius.`);
+class ClaseTejido {
+    constructor(nombre, horario, profesora) {
+        this.nombre = nombre;
+        this.horario = horario;
+        this.profesora = profesora;
     }
 
-    alert("Gracias por usar el conversor. ¡Hasta pronto!");
-    console.log("El programa terminó después de realizar todas las conversiones.");
+    obtenerDescripcion() {
+        return `${this.nombre} - Horario: ${this.horario}, Profesora: ${this.profesora}`;
+    }
+
+    // Filtrar clases por nombre 
+    static filtrarPorClase(clases, nombreClase) {
+        return clases.filter(clase => clase.nombre.toLowerCase() === nombreClase.toLowerCase());
+    }
+}
+
+let respuesta = prompt("¿Deseas inscribirte a clases de tejido? (si/no)");
+
+if (respuesta.toLowerCase() === "si") {
+    let clases = [
+        new ClaseTejido("Crochet", "Lunes 10:00 AM", "Patricia"),
+        new ClaseTejido("Macramé", "Martes 2:00 PM", "Alicia"),
+        new ClaseTejido("Tricot", "Miércoles 4:00 PM", "Sonia"),
+        new ClaseTejido("Telar", "Jueves 6:00 PM", "Monica")
+    ];
+
+    let mensaje = "¡Genial! Estas son las opciones disponibles: \n";
+    clases.forEach((clase, index) => {
+        mensaje += `${index + 1}. ${clase.obtenerDescripcion()}\n`;
+    });
+    alert(mensaje);
+    console.log(mensaje);
+
+    let seleccion = parseInt(prompt("Por favor, elige el número de la clase a la que deseas inscribirte:"));
+
+    if (seleccion > 0 && seleccion <= clases.length) {
+        let claseElegida = clases[seleccion - 1];
+        alert(`Te has inscripto en la clase de ${claseElegida.obtenerDescripcion()}`);
+        console.log(`Inscripto en: ${claseElegida.nombre}`);
+    } else {
+        alert("Respuesta inválida. Por favor, intenta nuevamente.");
+        console.log("Selección inválida.");
+    }
+
+    // Buscar clases por nombre
+    let claseBuscada = prompt("Ingresa el nombre de la clase para buscar sus detalles:");
+    let clasesFiltradas = ClaseTejido.filtrarPorClase(clases, claseBuscada);
+
+    if (clasesFiltradas.length > 0) {
+        let mensajeFiltrado = `Clases encontradas con el nombre ${claseBuscada}:\n`;
+        clasesFiltradas.forEach(clase => {
+            mensajeFiltrado += `${clase.obtenerDescripcion()}\n`;
+        });
+        alert(mensajeFiltrado);
+        console.log(mensajeFiltrado);
+    } else {
+        alert("No se encontraron clases con ese nombre.");
+        console.log("No se encontraron clases con ese nombre.");
+    }
+
+} else if (respuesta.toLowerCase() === "no") {
+    alert("Está bien, tal vez en otra ocasión.");
+    console.log("Está bien, tal vez en otra ocasión.");
+} else {
+    alert("Respuesta inválida. Por favor, responde con 'si' o 'no'.");
+    console.log("Respuesta inválida. Por favor, responde con 'si' o 'no'.");
 }
