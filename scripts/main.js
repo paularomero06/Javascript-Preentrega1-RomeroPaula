@@ -66,3 +66,5 @@ if (respuesta.toLowerCase() === "si") {
     alert("Respuesta inválida. Por favor, responde con 'si' o 'no'.");
     console.log("Respuesta inválida. Por favor, responde con 'si' o 'no'.");
 }
+
+//CAMBIOS EN NOTEBOOK CHECK
