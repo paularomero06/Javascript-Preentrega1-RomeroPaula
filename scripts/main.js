@@ -9,62 +9,93 @@ class ClaseTejido {
         return `${this.nombre} - Horario: ${this.horario}, Profesora: ${this.profesora}`;
     }
 
-    // Filtrar clases por nombre 
+    // Método estático para filtrar clases por nombre de clase
     static filtrarPorClase(clases, nombreClase) {
         return clases.filter(clase => clase.nombre.toLowerCase() === nombreClase.toLowerCase());
     }
 }
 
-let respuesta = prompt("¿Deseas inscribirte a clases de tejido? (si/no)");
+let clases = [
+    new ClaseTejido("Crochet", "Lunes 10:00 AM", "Patricia"),
+    new ClaseTejido("Macramé", "Martes 2:00 PM", "Alicia"),
+    new ClaseTejido("Tricot", "Miércoles 4:00 PM", "Sonia"),
+    new ClaseTejido("Telar", "Jueves 6:00 PM", "Monica")
+];
 
-if (respuesta.toLowerCase() === "si") {
-    let clases = [
-        new ClaseTejido("Crochet", "Lunes 10:00 AM", "Patricia"),
-        new ClaseTejido("Macramé", "Martes 2:00 PM", "Alicia"),
-        new ClaseTejido("Tricot", "Miércoles 4:00 PM", "Sonia"),
-        new ClaseTejido("Telar", "Jueves 6:00 PM", "Monica")
-    ];
+// Mostrar clases disponibles con botón de inscripción
+document.getElementById("mostrarClases").addEventListener("click", () => {
+    const clasesDisponibles = document.getElementById("clasesDisponibles");
+    clasesDisponibles.innerHTML = "<h3>Opciones de clases disponibles:</h3>";
 
-    let mensaje = "¡Genial! Estas son las opciones disponibles: \n";
     clases.forEach((clase, index) => {
-        mensaje += `${index + 1}. ${clase.obtenerDescripcion()}\n`;
+        clasesDisponibles.innerHTML += `
+            <div>
+                <p>${index + 1}. ${clase.obtenerDescripcion()}</p>
+                <button onclick="inscribirse(${index})">Inscribirse</button>
+            </div>
+        `;
     });
-    alert(mensaje);
-    console.log(mensaje);
+});
 
-    let seleccion = parseInt(prompt("Por favor, elige el número de la clase a la que deseas inscribirte:"));
+// Manejar inscripción
+function inscribirse(index) {
+    const claseElegida = clases[index];
+    const resultadoInscripcion = document.getElementById("resultadoInscripcion");
 
-    if (seleccion > 0 && seleccion <= clases.length) {
-        let claseElegida = clases[seleccion - 1];
-        alert(`Te has inscripto en la clase de ${claseElegida.obtenerDescripcion()}`);
-        console.log(`Inscripto en: ${claseElegida.nombre}`);
-    } else {
-        alert("Respuesta inválida. Por favor, intenta nuevamente.");
-        console.log("Selección inválida.");
-    }
-
-    // Buscar clases por nombre
-    let claseBuscada = prompt("Ingresa el nombre de la clase para buscar sus detalles:");
-    let clasesFiltradas = ClaseTejido.filtrarPorClase(clases, claseBuscada);
-
-    if (clasesFiltradas.length > 0) {
-        let mensajeFiltrado = `Clases encontradas con el nombre ${claseBuscada}:\n`;
-        clasesFiltradas.forEach(clase => {
-            mensajeFiltrado += `${clase.obtenerDescripcion()}\n`;
-        });
-        alert(mensajeFiltrado);
-        console.log(mensajeFiltrado);
-    } else {
-        alert("No se encontraron clases con ese nombre.");
-        console.log("No se encontraron clases con ese nombre.");
-    }
-
-} else if (respuesta.toLowerCase() === "no") {
-    alert("Está bien, tal vez en otra ocasión.");
-    console.log("Está bien, tal vez en otra ocasión.");
-} else {
-    alert("Respuesta inválida. Por favor, responde con 'si' o 'no'.");
-    console.log("Respuesta inválida. Por favor, responde con 'si' o 'no'.");
+    resultadoInscripcion.innerHTML = `
+        <h3>Inscripción confirmada</h3>
+        <p>Te has inscripto en: ${claseElegida.obtenerDescripcion()}</p>
+    `;
 }
 
-//CAMBIOS EN NOTEBOOK CHECK
+// Buscar clases por nombre
+document.getElementById("buscar").addEventListener("click", () => {
+    const claseBuscada = document.getElementById("buscarClase").value;
+    const resultadoBusqueda = document.getElementById("resultadoBusqueda");
+
+    const clasesFiltradas = ClaseTejido.filtrarPorClase(clases, claseBuscada);
+
+    if (clasesFiltradas.length > 0) {
+        resultadoBusqueda.innerHTML = "<h3>Clases encontradas:</h3>";
+        clasesFiltradas.forEach(clase => {
+            resultadoBusqueda.innerHTML += `<p>${clase.obtenerDescripcion()}</p>`;
+        });
+    } else {
+        resultadoBusqueda.innerHTML = "<p>No se encontraron clases con ese nombre.</p>";
+    }
+});
+
+function inscribirse(index) {
+    const claseElegida = clases[index];
+    
+    // Obtener inscripciones existentes o inicializar un array
+    let inscripciones = JSON.parse(localStorage.getItem("inscripciones")) || [];
+    
+    // Agregar la nueva inscripción
+    inscripciones.push(claseElegida);
+    
+    // Guardar nuevamente en localStorage
+    localStorage.setItem("inscripciones", JSON.stringify(inscripciones));
+
+    // Mostrar el mensaje de confirmación
+    const resultadoInscripcion = document.getElementById("resultadoInscripcion");
+    resultadoInscripcion.innerHTML = `
+        <h3>Inscripción confirmada</h3>
+        <p>Te has inscrito en: ${claseElegida.obtenerDescripcion()}</p>
+    `;
+}
+
+document.getElementById("verInscripciones").addEventListener("click", () => {
+    const inscripciones = JSON.parse(localStorage.getItem("inscripciones")) || [];
+    const historial = document.getElementById("resultadoBusqueda");
+
+    if (inscripciones.length > 0) {
+        historial.innerHTML = "<h3>Historial de Inscripciones:</h3>";
+        inscripciones.forEach(inscripcion => {
+            historial.innerHTML += `<p>${inscripcion.nombre} - Horario: ${inscripcion.horario}, Profesora: ${inscripcion.profesora}</p>`;
+        });
+    } else {
+        historial.innerHTML = "<p>No tienes inscripciones registradas.</p>";
+    }
+});
+
